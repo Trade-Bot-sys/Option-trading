@@ -1,9 +1,11 @@
-pandas
 streamlit
-numpy
+pandas
 scikit-learn
-requests
 joblib
+requests
+datetime
+pyotp
+smartapi-python
+schedule
 matplotlib
-ta
-angel-one-smartapi
+plotly
