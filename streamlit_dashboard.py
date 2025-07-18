@@ -2,7 +2,7 @@
 
 import streamlit as st
 import json
-from angel_one_api import get_profile, get_funds, get_portfolio
+from angelone_api import get_available_funds, get_option_portfolio
 from ai_signal_generator import load_ai_model
 from telegram_alert import send_telegram_message
 from main import run_trading_bot  # This will run your full trading logic
@@ -29,7 +29,7 @@ else:
     st.stop()
 
 # ✅ 3. Show Available Funds
-funds = get_funds()
+funds = get_available_funds()
 if funds:
     st.info(f"💰 Available Margin: ₹{funds.get('available_margin', '0')}")
 else:
@@ -46,7 +46,7 @@ else:
     st.stop()
 
 # ✅ 5. Show Portfolio (Options)
-portfolio = get_portfolio()
+portfolio = get_option_portfolio()
 if portfolio:
     st.subheader("📊 Live Option Portfolio")
     df = portfolio[portfolio['tradingsymbol'].str.contains('CE|PE', na=False)]
