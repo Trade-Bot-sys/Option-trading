@@ -11,23 +11,6 @@ st.set_page_config(page_title="Smart AI Option Trading Bot", layout="wide")
 
 st.title("📈 Smart AI Trading Dashboard (Angel One)")
 
-# ✅ 1. Load access token
-try:
-    with open("access_token.json") as f:
-        access_data = json.load(f)
-        client = access_data.get("client_code")
-except Exception as e:
-    st.error("❌ Access token not found or invalid.")
-    st.stop()
-
-# ✅ 2. API Connection Check
-profile = get_profile()
-if profile:
-    st.success(f"✅ Connected to Angel One - Welcome {profile.get('name', 'Trader')}")
-else:
-    st.error("❌ Failed to connect to Angel One API.")
-    st.stop()
-
 # ✅ 3. Show Available Funds
 funds = get_available_funds()
 if funds:
