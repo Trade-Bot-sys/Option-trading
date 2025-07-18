@@ -2,8 +2,8 @@ import requests
 import datetime
 
 # Telegram Bot Config
-TELEGRAM_BOT_TOKEN = "your_bot_token_here"
-TELEGRAM_CHAT_ID = "your_chat_id_here"
+TELEGRAM_BOT_TOKEN = "TELEGRAM_TOKEN"
+TELEGRAM_CHAT_ID = "TELEGRAM_CHAT_ID"
 
 def send_telegram_message(message: str):
     """Sends a message to your Telegram bot"""
