@@ -3,8 +3,8 @@
 import streamlit as st
 import json
 from angelone_api import get_available_funds, get_option_portfolio
-from ai_signal_generator import load_ai_model
-from telegram_alert import send_telegram_message
+#from ai_signal_generator import load_ai_model
+from telegram_alerts import send_telegram_message
 from main import run_trading_bot  # This will run your full trading logic
 
 st.set_page_config(page_title="Smart AI Option Trading Bot", layout="wide")
