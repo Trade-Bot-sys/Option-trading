@@ -5,7 +5,7 @@ import json
 from angel_one_api import get_profile, get_funds, get_portfolio
 from ai_signal_generator import load_ai_model
 from telegram_alert import send_telegram_message
-from main import run_bot  # This will run your full trading logic
+from main import run_trading_bot  # This will run your full trading logic
 
 st.set_page_config(page_title="Smart AI Option Trading Bot", layout="wide")
 
