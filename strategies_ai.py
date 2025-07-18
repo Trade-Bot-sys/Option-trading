@@ -4,15 +4,33 @@ import xgboost as xgb
 import joblib
 import os
 import requests
-import streamlit as st
 
 from ta.trend import MACD
 from ta.momentum import RSIIndicator
 from ta.volatility import BollingerBands
 
 # Constants
-MODEL_PATH = "ai_model_xgb.pkl"
-MODEL_GIST_URL = "https://gist.githubusercontent.com/Trade-Bot-sys/4567b8e52b4de7ad1e4e1906ff00a7e3/raw/ai_model_xgb.pkl"
+MODEL_GIST_URL = "https://gist.githubusercontent.com/Trade-Bot-sys/c4a038ffd89d3f8b13f3f26fb3fb72ac/raw/nifty25_model.pkl"
+MODEL_PATH = "nifty25_model.pkl"
+model = None
+ai_enabled = False
+
+def fetch_model_from_gist(gist_url):
+    response = requests.get(gist_url)
+    if response.status_code == 200:
+        with open(MODEL_PATH, 'wb') as f:
+            f.write(response.content)
+        return joblib.load(MODEL_PATH)
+    else:
+        raise Exception("Failed to download model from Gist.")
+
+try:
+    model = fetch_model_from_gist(MODEL_GIST_URL)
+    ai_enabled = True
+    print("✅ AI model loaded from Gist.")
+except Exception as e:
+    print(f"⚠️ AI model load failed: {e}. Fallback to rule-based strategies.")
+    ai_enabled = False
 
 # Telegram constants (set your actual values)
 TELEGRAM_TOKEN = "your_telegram_bot_token"
@@ -27,7 +45,7 @@ def send_telegram_alert(message):
         }
         requests.post(url, data=payload)
     except Exception as e:
-        st.error(f"Telegram error: {e}")
+        print(f"Telegram error: {e}")
 
 def download_model_from_gist():
     try:
@@ -35,13 +53,10 @@ def download_model_from_gist():
         if response.status_code == 200:
             with open(MODEL_PATH, 'wb') as f:
                 f.write(response.content)
-            st.success("AI model downloaded from Gist.")
             send_telegram_alert("✅ AI model downloaded from Gist and ready.")
         else:
-            st.error("Failed to download AI model from Gist.")
             send_telegram_alert("❌ Failed to download AI model from Gist.")
     except Exception as e:
-        st.error(f"Download error: {e}")
         send_telegram_alert(f"❌ Model download error: {e}")
 
 def add_indicators(df):
@@ -57,16 +72,18 @@ def add_indicators(df):
 
 def load_ai_model():
     if not os.path.exists(MODEL_PATH):
-        st.warning("Model not found. Downloading from Gist...")
+        print("Model not found. Downloading from Gist...")
         download_model_from_gist()
 
     if os.path.exists(MODEL_PATH):
-        model = joblib.load(MODEL_PATH)
-        st.success("✅ AI Model loaded successfully.")
-        send_telegram_alert("✅ AI Model loaded successfully.")
-        return model
+        try:
+            model = joblib.load(MODEL_PATH)
+            send_telegram_alert("✅ AI Model loaded successfully.")
+            return model
+        except Exception as e:
+            send_telegram_alert(f"❌ Error loading model: {e}")
+            return None
     else:
-        st.error("❌ Model file not found even after download.")
         send_telegram_alert("❌ AI Model load failed.")
         return None
 
@@ -82,7 +99,7 @@ def generate_ai_signals(df):
         df['ai_signal'] = df['signal'].map({0: 'SELL', 1: 'HOLD', 2: 'BUY'})
         return df, df['ai_signal'].tolist()
     except Exception as e:
-        st.error(f"[ERROR] in generate_ai_signals: {e}")
+        print(f"[ERROR] in generate_ai_signals: {e}")
         send_telegram_alert(f"❌ Error in signal generation: {e}")
         return df, []
 
