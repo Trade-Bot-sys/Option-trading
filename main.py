@@ -1,10 +1,10 @@
 import time
 import json
 from datetime import datetime
-from contract_master import download_contract_master, load_contracts
-from option_selector import get_atm_strikes
+from contract import download_contract_master, load_contracts
+from option_trading import get_atm_strikes
 from strategy_ai import get_trade_signal
-from telegram_alert import send_telegram_alert
+from telegram_alerts import send_telegram_alert
 from utils import place_order, monitor_trade
 from config import BROKER, SYMBOL, LOT_SIZE
 
